@@ -1,0 +1,40 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main   # Trigger della pipeline solo sui push al branch principale
+  pull_request:
+    branches:
+      - main   # Trigger per i pull request sul branch principale
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Utilizza l'ultima versione di Ubuntu
+
+    steps:
+    # Step 1: Checkout del codice
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Settaggio Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'  # Imposta la versione di Node.js
+
+    # Step 3: Installazione delle dipendenze
+    - name: Install dependencies
+      run: npm install
+
+    # Step 4: Esegui il linting
+    - name: Run ESLint
+      run: npm run lint
+
+    # Step 5: Esegui i test
+    - name: Run tests
+      run: npm test -- --maxWorkers=2  # Usa --maxWorkers per limitare i thread
+
+    # Step 6: Esegui la build (opzionale se vuoi fare il deploy dopo la build)
+    - name: Build the app
+      run: npm run build
